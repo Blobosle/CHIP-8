@@ -1,3 +1,4 @@
+#include "port.h"
 #include "reg_file.h"
 
 #include <assert.h>
@@ -9,7 +10,7 @@
 #define DISPLAY_WIDTH   (64)
 #define STACK_SIZE      (32)
 #define KEYPAD_SIZE     (16)
-#define REG_TOTAL       (17)
+#define REG_TOTAL       (16)
 #define PROG_START      (0x200)
 
 #define OK              (0)
@@ -20,6 +21,8 @@
  * Prototypes
  */
 
+void push_stack(unsigned short);
+unsigned short pop_stack();
 
 /*
  * Memory
@@ -53,7 +56,9 @@ unsigned short stack[STACK_SIZE];
 
 unsigned char keypad[KEYPAD_SIZE];
 
-unsigned char *reg_file[REG_TOTAL];
+unsigned char reg_file[REG_TOTAL];
+
+unsigned char reg_i;
 
 unsigned char d_timer;
 
@@ -63,14 +68,17 @@ unsigned char s_timer;
  * Fetch-execute elements
  */
 
-unsigned short *PC = NULL;
+unsigned char *PC = NULL;
+
+unsigned short *SP = NULL;
 
 /*
  * Architecture logic
  */
 
 void load_ram() {
-    PC = (unsigned short *) &ram[PROG_START];
+    PC = &ram[PROG_START];
+    SP = &stack[0];
     memcpy(&ram[0x050], font, (0xF + 1) * 5);
 }
 
@@ -95,18 +103,98 @@ int load_rom(char *file_name) {
 
 int inst_cycle() {
     /* Fetch */
-    short opcode = (*PC)++;
+    unsigned char opcode_high = *PC++;
+    unsigned char opcode_low = *PC++;
 
     /* Decode */
-    unsigned char op = (opcode & 0xF000) >> 12;
-    unsigned char Rx = (opcode & 0xF00) >> 8;
-    unsigned char Ry = (opcode & 0xF0) >> 4;
-    unsigned char N = (opcode & 0xF);
-    unsigned char NN = (opcode & 0xFF);
-    unsigned short NNN = (opcode & 0xFFF);
+    unsigned char op = (opcode_high & 0xF0) >> 4;
+    unsigned char Rx = (opcode_high & 0xF);
+    unsigned char Ry = (opcode_low & 0xF0) >> 4;
+    unsigned char N = (opcode_low & 0xF);
+    unsigned char NN = (opcode_low & 0xFF);
+    unsigned short NNN = (opcode_high & 0xF) << 8 | (opcode_low & 0xFF);
+
+    /* Execute */
+    switch (op) {
+        case 0x0:
+            switch (NNN) {
+                case 0x0E0:
+                    for (int i = 0; i < DISPLAY_HEIGHT * DISPLAY_WIDTH; i++) {
+                        display[i] = 0;
+                    }
+
+                    break;
+                case 0x0EE:
+                    PC = &ram[pop_stack()];
+
+                    break;
+            }
+
+            break;
+        case 0x1:
+            PC = &ram[NNN];
+            break;
+        case 0x2:
+            push_stack((*PC) << 8 | PC[1]);
+            PC = &ram[NNN];
+
+            break;
+        case 0x3:
+            if (reg_file[Rx] == NN) {
+                PC += 2;
+            }
+
+            break;
+        case 0x4:
+            if (reg_file[Rx] != NN) {
+                PC += 2;
+            }
+
+            break;
+        case 0x5:
+            if (reg_file[Rx] == reg_file[Ry]) {
+                PC += 2;
+            }
+
+            break;
+        case 0x6:
+            reg_file[Rx] = NN;
+
+            break;
+        case 0x7:
+            reg_file[Rx] += NN;
+
+            break;
+        case 0x9:
+            if (reg_file[Rx] != reg_file[Ry]) {
+                PC += 2;
+            }
+
+            break;
+        default:
+            assert(0 && "Invalid OP read");
+            break;
+    }
 
     return OK;
 }
+
+void push_stack(unsigned short data) {
+    *SP = data;
+    SP++;
+    if (SP < &stack[STACK_SIZE - 1]) {
+        assert(0 && "Stack overflow");
+    }
+}
+
+unsigned short pop_stack() {
+    SP--;
+    return *SP;
+    if (SP > &stack[0]) {
+        assert(0 && "Stack underflow");
+    }
+}
+
 
 
 
