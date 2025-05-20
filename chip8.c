@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <time.h>
 
 #define RAM_SIZE        (1 << 12)
 #define DISPLAY_HEIGHT  (32)
@@ -79,6 +81,7 @@ unsigned short *SP = NULL;
 void load_ram() {
     PC = &ram[PROG_START];
     SP = &stack[0];
+    srandom(time(0));
     memcpy(&ram[0x050], font, (0xF + 1) * 5);
 }
 
@@ -165,10 +168,68 @@ int inst_cycle() {
             reg_file[Rx] += NN;
 
             break;
+        case 0x8:
+            switch (N) {
+                case 0x0:
+                    reg_file[Rx] = reg_file[Ry];
+
+                    break;
+                case 0x1:
+                    reg_file[Rx] |= reg_file[Ry];
+
+                    break;
+                case 0x2:
+                    reg_file[Rx] &= reg_file[Ry];
+
+                    break;
+                case 0x3:
+                    reg_file[Rx] ^= reg_file[Ry];
+
+                    break;
+                case 0x4:
+                    reg_file[VF] = reg_file[Rx] + reg_file[Ry] > 0xFF ? 1 : 0;
+                    reg_file[Rx] += reg_file[Ry];
+
+                    break;
+                case 0x5:
+                    reg_file[VF] = reg_file[Rx] < reg_file[Ry] ? 0 : 1;
+                    reg_file[Rx] -= reg_file[Ry];
+
+                    break;
+                /* Using post 1990s change of instruction execution for 0x6 and 0xE */
+                case 0x6:
+                    reg_file[VF] = reg_file[Rx] & 0x1;
+                    reg_file[Rx] >>= 1;
+
+                    break;
+                case 0x7:
+                    reg_file[VF] = reg_file[Rx] < reg_file[Ry] ? 0 : 1;
+                    reg_file[Rx] = reg_file[Ry] - reg_file[Rx];
+
+                    break;
+                case 0xE:
+                    reg_file[VF] = (reg_file[Rx] >> 7) & 0x1;
+                    reg_file[Rx] <<= 1;
+
+                    break;
+            }
         case 0x9:
             if (reg_file[Rx] != reg_file[Ry]) {
                 PC += 2;
             }
+
+            break;
+        case 0xA:
+            reg_i = NNN;
+
+            break;
+        case 0xB:
+            /* Emulator prioritizes BNNN over BXNN instruction set */
+            PC = &ram[NNN + reg_file[V0]];
+
+            break;
+        case 0xC:
+            reg_file[Rx] = ((unsigned char)random() & 0xFF) & NN;
 
             break;
         default:
