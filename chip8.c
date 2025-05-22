@@ -228,6 +228,8 @@ int inst_cycle() {
 
                     break;
             }
+
+            break;
         case 0x9:
             if (reg_file[Rx] != reg_file[Ry]) {
                 PC += 2;
