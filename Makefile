@@ -1,11 +1,12 @@
-CC = gcc
-CFLAGS = -Wall -arch arm64 $(shell sdl2-config --cflags)
-LDFLAGS = -arch arm64 $(shell sdl2-config --libs)
-SRC = chip8.c main.c display.c
-TEST_SRC = chip8.c tester.c
-OBJ = $(SRC:.c=.o)
-TEST_OBJ = $(TEST_SRC:.c=.o)
-TARGET = emu
+CC := gcc
+CFLAGS := -Wall -arch arm64 $(shell sdl2-config --cflags)
+LDFLAGS := -arch arm64 $(shell sdl2-config --libs)
+SRC := chip8.c main.c display.c
+TEST_SRC := chip8.c tester.c
+OBJ := $(SRC:.c=.o)
+TEST_OBJ := $(TEST_SRC:.c=.o)
+TARGET := emu
+VPATH := src:tests
 
 .PHONY: all test clean
 
