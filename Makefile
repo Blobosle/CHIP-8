@@ -17,4 +17,4 @@ test: $(TEST_OBJ)
 	$(CC) -o emu_test $^
 
 clean:
-	rm -f $(OBJ) emu_test
+	rm -f $(OBJ) $(TARGET) emu_test logs.txt

@@ -59,7 +59,7 @@ unsigned char keypad[KEYPAD_SIZE];
 
 unsigned char reg_file[REG_TOTAL];
 
-unsigned char reg_i;
+unsigned short reg_i;
 
 unsigned char d_timer;
 
@@ -110,15 +110,16 @@ int load_rom(char *file_name) {
 }
 
 int inst_cycle() {
+    static int counter = 0;
     s_flag = 0;
     d_flag = 0;
 
-    FILE *fp = fopen("logs.txt", "wa");
+    FILE *fp = fopen("logs.txt", "a");
     /* Fetch */
     unsigned char opcode_high = *PC++;
     unsigned char opcode_low = *PC++;
 
-    fprintf(fp, "%x%x\n", opcode_high, opcode_low);
+    fprintf(fp, "[%d] 0x%x%x\n", counter++, opcode_high, opcode_low);
     fclose(fp);
     fp = NULL;
 
@@ -149,6 +150,7 @@ int inst_cycle() {
             break;
         case 0x1:
             PC = &ram[NNN];
+
             break;
         case 0x2:
             push_stack((*PC) << 8 | PC[1]);
