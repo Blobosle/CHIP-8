@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv) {
     if (argc != 2) {
-        ERR("Missing arguments\n");
+        ERR("Missing arguments: expected ROM source path\n");
         return -1;
     }
 
