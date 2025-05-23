@@ -369,7 +369,7 @@ int inst_cycle() {
 void push_stack(unsigned short data) {
     *SP = data;
     SP++;
-    if (SP < &stack[STACK_SIZE - 1]) {
+    if (SP >= &stack[STACK_SIZE - 1]) {
         assert(0 && "Stack overflow");
     }
 }
@@ -377,12 +377,7 @@ void push_stack(unsigned short data) {
 unsigned short pop_stack() {
     SP--;
     return *SP;
-    if (SP > &stack[0]) {
+    if (SP <= &stack[0]) {
         assert(0 && "Stack underflow");
     }
 }
-
-
-
-
-
