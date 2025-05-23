@@ -10,6 +10,7 @@ Makefile specified for ARM based macOS with SDL2.
 
 > Inspect include directives in ```display.c``` for SDL2 implementation.
 
+Supports usage of ```bytes.hex``` to convert hex digits into a machine instruction program ```tests/test.bin```, using ```make test```.
 
 ## Architecture design
 
