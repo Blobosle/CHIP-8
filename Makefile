@@ -14,7 +14,7 @@ all: $(OBJ)
 	$(CC) $(LDFLAGS) -o $(TARGET) $^
 
 test: $(TEST_OBJ)
-	tr -d ' \n' < bytes.hex | xxd -r -p > test.bin
+	tr -d ' \n' < bytes.hex | xxd -r -p > ./tests/test.bin
 	$(CC) -o emu_test $^
 
 clean:
