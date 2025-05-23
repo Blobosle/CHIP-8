@@ -10,11 +10,10 @@ Makefile specified for ARM based macOS with SDL2.
 
 > Inspect include directives in ```display.c``` for SDL2 implementation.
 
-Program takes in ROM path as first and only argument.
 
 ## Architecture design
 
-Specifications of emulation that vary from the original CHIP-8/SUPER-CHIP design components.
+Specifications of emulation, in which some vary from the original CHIP-8/SUPER-CHIP design components.
 
 - Direct program access to 4 kilobytes of contiguous RAM.
 - Display is 64 x 32 pixels (adjustable) monochrome.
@@ -25,4 +24,11 @@ Specifications of emulation that vary from the original CHIP-8/SUPER-CHIP design
 - Programs loaded from ```0x200``` on RAM.
 - Post 1990s instruction set execution for ```0x6``` and ```0xE``` op half-bytes.
 - Prioritization of ```BNNN``` over ```BXNN``` instruction formats.
+- Big-endian opcodes.
 - Single 16-bit instruction cycle.
+
+## CHIP-8 specific resources
+
+An [article](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM) for understanding the instruction set for the CHIP-8.
+
+Sufficient background information about the architecture can be found on [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
