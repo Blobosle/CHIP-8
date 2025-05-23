@@ -7,10 +7,10 @@ SDL_Window* screen;
 SDL_Renderer* renderer;
 
 /*
- * 1    2   3   4
- * q    w   e   r
- * a    s   d   f
- * z    x   c   v
+ * 1   2   3   4
+ * q   w   e   r
+ * a   s   d   f
+ * z   x   c   v
  */
 SDL_Scancode keymappings[16] = {
     SDL_SCANCODE_1, SDL_SCANCODE_2, SDL_SCANCODE_3, SDL_SCANCODE_4,
@@ -20,7 +20,7 @@ SDL_Scancode keymappings[16] = {
 
 int should_quit = 0;
 
-void init_display(void) {
+void init_display() {
     SDL_Init(SDL_INIT_VIDEO);
 
     screen = SDL_CreateWindow("CHIP-8", SDL_WINDOWPOS_CENTERED,
@@ -56,9 +56,7 @@ void draw(unsigned char* display) {
 void sdl_ehandler(unsigned char* keypad) {
     SDL_Event event;
 
-    // check for event
     if (SDL_PollEvent(&event)) {
-        // get snapshot of current state of the keyboard
         const Uint8* state = SDL_GetKeyboardState(NULL);
 
         switch (event.type) {
@@ -70,7 +68,6 @@ void sdl_ehandler(unsigned char* keypad) {
                     should_quit = 1;
                 }
 
-                // updating the keypad with the current state
                 for (int keycode = 0; keycode < 16; keycode++) {
                     keypad[keycode] = state[keymappings[keycode]];
                 }
@@ -80,7 +77,7 @@ void sdl_ehandler(unsigned char* keypad) {
     }
 }
 
-void stop_display(void) {
+void stop_display() {
     SDL_DestroyWindow(screen);
     SDL_Quit();
 }

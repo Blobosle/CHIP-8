@@ -68,6 +68,7 @@ unsigned char s_timer;
 unsigned char d_flag;
 
 unsigned char s_flag;
+
 /*
  * Fetch-execute elements
  */
