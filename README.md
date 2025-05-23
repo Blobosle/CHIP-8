@@ -16,7 +16,7 @@ Program takes in ROM path as first and only argument.
 
 Specifications of emulation that vary from the original CHIP-8/SUPER-CHIP design components.
 
-- Direct access to 4 kilobytes of RAM.
+- Direct program access to 4 kilobytes of contiguous RAM.
 - Display is 64 x 32 pixels (adjustable) monochrome.
 - 16 8-bit adjacent general purpose registers & 1 16-bit register for indexing RAM.
 - 128 bytes of upwards growing Stack on a separate memory space from RAM (practically implies "unlimited" stack)
