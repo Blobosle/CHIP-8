@@ -1,6 +1,6 @@
 # CHIP-8
 
-CHIP-8 emulator/interpreter made in C and SDL2.
+CHIP-8 emulator/interpreter made in C and C++, with SDL2 for graphics.
 
 <img width="1701" alt="Screenshot 2025-05-22 at 5 01 28 PM" src="https://github.com/user-attachments/assets/09091198-d510-4503-b5e5-0f5de6d320fe" />
 
